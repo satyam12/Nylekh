@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Free Dictation Test</title>
+<meta name="theme-color" content="#1f4e9c">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxODAgMTgwIj4KICA8cmVjdCB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCIgcng9IjQwIiBmaWxsPSIjMWY0ZTljIi8+CiAgPHJlY3QgeD0iMzQiIHk9IjMwIiB3aWR0aD0iODAiIGhlaWdodD0iMTEyIiByeD0iOSIgZmlsbD0iI2ZmZmZmZiIvPgogIDxyZWN0IHg9IjQ4IiB5PSI1MiIgd2lkdGg9IjUyIiBoZWlnaHQ9IjciIHJ4PSIzLjUiIGZpbGw9IiMxZjRlOWMiIG9wYWNpdHk9Ii41NSIvPgogIDxyZWN0IHg9IjQ4IiB5PSI3MCIgd2lkdGg9IjUyIiBoZWlnaHQ9IjciIHJ4PSIzLjUiIGZpbGw9IiMxZjRlOWMiIG9wYWNpdHk9Ii41NSIvPgogIDxyZWN0IHg9IjQ4IiB5PSI4OCIgd2lkdGg9IjM2IiBoZWlnaHQ9IjciIHJ4PSIzLjUiIGZpbGw9IiMxZjRlOWMiIG9wYWNpdHk9Ii41NSIvPgogIDxjaXJjbGUgY3g9IjExOCIgY3k9IjExOCIgcj0iMzgiIGZpbGw9IiNmNWI4M2QiLz4KICA8cmVjdCB4PSIxMDciIHk9Ijk0IiB3aWR0aD0iMjIiIGhlaWdodD0iMzQiIHJ4PSIxMSIgZmlsbD0iIzFmMmEzZCIvPgogIDxwYXRoIGQ9Ik0xMDAgMTE2YTE4IDE4IDAgMCAwIDM2IDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzFmMmEzZCIgc3Ryb2tlLXdpZHRoPSI1IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8cGF0aCBkPSJNMTE4IDEzNHY5IiBzdHJva2U9IiMxZjJhM2QiIHN0cm9rZS13aWR0aD0iNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+Cjwvc3ZnPgo=">
+<style>
+:root {
+  --bg: #f4f5f8; --surface: #ffffff; --ink: #161b26; --muted: #5d6677; --line: #dde1e8;
+  --accent: #1f4e9c; --accent-ink: #ffffff; --rec: #c62828;
+  --ok: #1d7a49; --ok-soft: #dff3e7; --err: #b42318; --err-soft: #fde4e1; --warn: #8a5300; --warn-soft: #fff1d1; --field: #f8f9fb;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #0f131a; --surface: #171c25; --ink: #e8ebf1; --muted: #9aa3b4; --line: #2b3240;
+    --accent: #6d9eff; --accent-ink: #0b1220; --rec: #ff6b5e;
+    --ok: #5cc98e; --ok-soft: #173326; --err: #ff8a7a; --err-soft: #3d1c19; --warn: #f0b552; --warn-soft: #3a2c12; --field: #121720; color-scheme: dark; }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--ink);
+  font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans", "Noto Sans Devanagari", sans-serif; }
+main { max-width: 640px; margin: 0 auto; padding: calc(16px + env(safe-area-inset-top, 0px)) 16px calc(24px + env(safe-area-inset-bottom, 0px));
+  display: flex; flex-direction: column; gap: 14px; }
+header h1 { margin: 0; font-size: 20px; letter-spacing: -.01em; }
+header p { margin: 2px 0 0; color: var(--muted); font-size: 14px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px; }
+.banner { border-radius: 12px; padding: 12px 14px; background: var(--warn-soft); color: var(--ink); font-size: 15px; }
+.banner a { color: var(--accent); font-weight: 700; word-break: break-all; }
+.banner[hidden] { display: none; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.seg button { font: inherit; font-size: 15px; padding: 9px 14px; border: 0; background: var(--surface); color: var(--ink); cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button.on { background: var(--accent); color: var(--accent-ink); font-weight: 600; }
+.recorder { display: grid; justify-items: center; gap: 10px; padding: 18px 14px; }
+#mic { width: 116px; height: 116px; border-radius: 50%; border: 0; background: var(--accent); color: var(--accent-ink);
+  display: grid; place-items: center; cursor: pointer; box-shadow: 0 6px 18px rgba(0,0,0,.18); transition: transform .1s, background .2s;
+  -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+#mic:active { transform: scale(.96); }
+#mic svg { width: 46px; height: 46px; }
+#mic.on { background: var(--rec); animation: pulse 1.4s ease-in-out infinite; }
+#mic:disabled { opacity: .55; cursor: default; animation: none; }
+@keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(198,40,40,.45); } 50% { box-shadow: 0 0 0 16px rgba(198,40,40,0); } }
+@media (prefers-reduced-motion: reduce) { #mic.on { animation: none; } }
+#clock { font-variant-numeric: tabular-nums; font-weight: 600; font-size: 18px; }
+#live { width: 100%; min-height: 48px; padding: 10px 12px; border-radius: 10px; background: var(--field); border: 1px solid var(--line);
+  font-size: 17px; color: var(--muted); overflow-wrap: anywhere; }
+#live.heard { color: var(--ink); }
+#status { font-size: 14px; color: var(--muted); text-align: center; min-height: 1.5em; }
+#status.err { color: var(--err); } #status.ok { color: var(--ok); }
+.spin { width: 14px; height: 14px; border: 2px solid var(--line); border-top-color: var(--accent); border-radius: 50%;
+  display: inline-block; vertical-align: -2px; animation: spin .8s linear infinite; margin-right: 6px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+label { display: grid; gap: 5px; font-size: 14px; font-weight: 600; color: var(--muted); }
+textarea { font: inherit; font-size: 18px; line-height: 1.6; color: var(--ink); background: var(--field); border: 1px solid var(--line);
+  border-radius: 10px; padding: 10px 12px; width: 100%; min-width: 0; min-height: 200px; resize: vertical; }
+textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn { font: inherit; font-size: 15px; font-weight: 600; border-radius: 10px; padding: 10px 14px; border: 1px solid var(--line);
+  background: var(--surface); color: var(--ink); cursor: pointer; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.wide { width: 100%; padding: 12px 14px; font-size: 16px; }
+.btn:disabled { opacity: .5; cursor: default; }
+.meta { font-size: 13px; color: var(--muted); }
+.checks { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 8px; }
+.checks li { display: grid; grid-template-columns: 26px 1fr; gap: 6px; align-items: start; font-size: 15px; }
+.checks li .i { font-size: 17px; line-height: 1.35; text-align: center; }
+.checks li .d { color: var(--muted); font-size: 13.5px; overflow-wrap: anywhere; }
+.checks li.ok .t { color: var(--ok); } .checks li.err .t { color: var(--err); }
+.sample { margin-top: 4px; padding: 8px 10px; border-radius: 8px; background: var(--field); border: 1px solid var(--line); font-size: 14px; color: var(--ink); }
+.say { font-size: 17px; font-weight: 600; color: var(--ink); }
+#detail { margin-top: 8px; white-space: pre-wrap; word-break: break-word; font: 12px/1.45 ui-monospace, Menlo, Consolas, monospace;
+  background: var(--field); border: 1px solid var(--line); border-radius: 8px; padding: 10px; max-height: 260px; overflow: auto; }
+table.cmds { border-collapse: collapse; width: 100%; font-size: 14px; }
+table.cmds td { padding: 4px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+footer { font-size: 12.5px; color: var(--muted); }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Free Dictation Test</h1>
+    <p>No key, no account, no payment — your browser’s own speech recognition. <span id="ver">free page v1 · 24 Oct 2026</span></p>
+  </header>
+
+  <div class="banner" id="where" hidden></div>
+
+  <section class="card" id="checkcard">
+    <button class="btn primary wide" id="runcheck">✓ Check this device</button>
+    <ul class="checks" id="checks" hidden></ul>
+    <div class="actions" style="margin-top:10px" id="checkacts" hidden>
+      <button class="btn" id="copyreport">Copy report</button>
+    </div>
+  </section>
+
+  <section class="card recorder" aria-label="Recorder">
+    <div class="seg" id="lang" role="group" aria-label="Language">
+      <button data-v="hi-IN">हिन्दी</button><button data-v="en-IN">English</button>
+    </div>
+    <button id="mic" aria-label="Start dictation" title="Start / stop dictation">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
+    </button>
+    <div id="clock">0:00</div>
+    <div id="live">Words appear here while you speak.</div>
+    <div id="status" role="status" aria-live="polite">Tap the microphone and speak. Pause briefly between sentences.</div>
+  </section>
+
+  <section class="card">
+    <label for="out" style="margin-bottom:8px">Text</label>
+    <textarea id="out" placeholder="Your dictation is written here. You can also type and correct it."></textarea>
+    <div class="actions" style="margin-top:10px">
+      <button class="btn primary" id="copy">Copy</button>
+      <button class="btn" id="clear">Clear</button>
+    </div>
+    <details style="margin-top:10px"><summary class="meta" style="cursor:pointer">Voice commands</summary>
+      <table class="cmds">
+        <tr><td>“full stop” · “पूर्ण विराम”</td><td>. · ।</td></tr><tr><td>“comma” · “अल्पविराम”</td><td>,</td></tr>
+        <tr><td>“new paragraph” · “नया पैराग्राफ”</td><td>blank line</td></tr><tr><td>“new line” · “नई लाइन”</td><td>line break</td></tr>
+        <tr><td>“question mark”, “colon”, “semicolon”</td><td>? : ;</td></tr><tr><td>“open bracket”, “close bracket”</td><td>( )</td></tr>
+      </table>
+      <p class="meta">Spoken “honourable court” is written “Hon'ble Court”.</p>
+    </details>
+    <details id="dbg" style="margin-top:6px"><summary class="meta" style="cursor:pointer">Technical details</summary><div id="detail"></div></details>
+  </section>
+
+  <footer>Free: the browser does the recognition itself — Chrome and Android use Google’s free speech service, Safari uses Apple’s, Edge uses Microsoft’s, so the voice is sent to that company (no key or account involved). Nothing is stored by this page except your text, in this browser. Works in Chrome, Edge and Safari; Firefox has no built-in speech recognition.</footer>
+</main>
+
+<script>
+(() => {
+  'use strict';
+  const $ = (s) => document.querySelector(s);
+  const HOME = 'https://satyam12.github.io/Nylekh/free-test.html';
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const UA = navigator.userAgent;
+  const ANDROID = /Android/i.test(UA);
+  const IOS = /iP(hone|ad|od)/.test(UA) || (/Macintosh/.test(UA) && navigator.maxTouchPoints > 1);
+  // pages shown inside another app (Android WebView "; wv)", social apps, the Google app, or an iPhone/iPad app's own web view)
+  const IN_APP = /; wv\)|FBAN|FBAV|Instagram|LinkedInApp|Snapchat|Line\/|GSA\//.test(UA) || (IOS && !/Safari\//.test(UA));
+  // Safari (and every browser on iPhone/iPad) shows one growing line and often never marks it final
+  const WEBKIT_SR = IOS || (/Safari/.test(UA) && !/Chrome|Chromium|CriOS|Edg|Android/.test(UA));
+  const DEVICE = IOS ? 'iPhone/iPad' : ANDROID ? 'Android' : /Windows/.test(UA) ? 'Windows' : /Macintosh/.test(UA) ? 'Mac' : /Linux|CrOS/.test(UA) ? 'Linux/ChromeOS' : 'other';
+  const BROWSER = /Edg\//.test(UA) ? 'Edge' : /SamsungBrowser/.test(UA) ? 'Samsung Internet' : /Firefox\/|FxiOS/.test(UA) ? 'Firefox' : /CriOS|Chrome\//.test(UA) ? 'Chrome' : /Safari\//.test(UA) ? 'Safari' : 'browser';
+  const store = {
+    get(k, d = '') { try { const v = localStorage.getItem('freetest.' + k); return v === null ? d : v; } catch { return d; } },
+    set(k, v) { try { localStorage.setItem('freetest.' + k, v); } catch { /* private mode */ } },
+  };
+  const el = { mic: $('#mic'), clock: $('#clock'), live: $('#live'), status: $('#status'), out: $('#out'), checks: $('#checks'), where: $('#where'), detail: $('#detail') };
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const clock = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+  const say = (msg, kind = '') => { el.status.className = kind; el.status.innerHTML = msg; };
+  const LOG = [];
+  const log = (m) => { LOG.push(`${new Date().toISOString().slice(11, 19)} ${m}`); if (LOG.length > 80) LOG.shift(); el.detail.textContent = LOG.slice(-30).join('\n'); };
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+  // ---- language
+  let lang = store.get('lang', 'en-IN');
+  const setLang = (v) => { lang = v; store.set('lang', v); document.querySelectorAll('#lang button').forEach((b) => b.classList.toggle('on', b.dataset.v === v)); };
+  setLang(lang);
+  $('#lang').addEventListener('click', (e) => {
+    const b = e.target.closest('button'); if (!b || b.dataset.v === lang) return;
+    setLang(b.dataset.v);
+    if (rec && rec.r) { log('language changed while recording'); try { rec.r.stop(); } catch { /* restarts in the new language */ } }
+  });
+  el.out.value = store.get('text');
+  el.out.addEventListener('input', () => store.set('text', el.out.value));
+
+  // ---- where is this page running?
+  const onWebsite = window.isSecureContext && /^https?:$/.test(location.protocol) && !IN_APP;
+  function whereProblem() {
+    if (IN_APP) return `This page is open inside another app (for example a chat app or a file preview), which does not allow the microphone. Open it in ${IOS ? 'Safari' : 'Chrome'}:`;
+    if (!window.isSecureContext || !/^https?:$/.test(location.protocol)) return `This is a downloaded copy opened from a file, where the microphone does not work. Open the page on the website in ${IOS ? 'Safari' : 'Chrome'}:`;
+    return '';
+  }
+  if (!onWebsite) { el.where.hidden = false; el.where.innerHTML = `⚠ ${esc(whereProblem())}<br><a href="${HOME}" target="_blank" rel="noopener">${HOME}</a><br><small>If that address shows “404”, the file has not been uploaded to GitHub yet.</small>`; }
+  else if (!SR) { el.where.hidden = false; el.where.innerHTML = `⚠ ${esc(BROWSER)} has no built-in speech recognition. Open this page in ${IOS ? 'Safari' : 'Chrome or Edge'}.`; }
+
+  const ERRORS = {
+    'not-allowed': () => (ANDROID ? 'The microphone is blocked. In Chrome, tap the icon to the left of the web address › Permissions › Microphone › Allow, then reload. If it already says Allow there: Android Settings › Apps › Chrome › Permissions › Microphone › Allow.'
+      : IOS ? 'Microphone or speech recognition is not allowed. In Safari tap aA › Website Settings › Microphone › Allow. Also check Settings › Apps › Safari › Microphone, and Settings › Privacy & Security › Speech Recognition › Safari.'
+        : 'The microphone is blocked. Click the icon to the left of the web address › Microphone › Allow, then reload. On Windows also check Settings › Privacy & security › Microphone (allow desktop apps); on a Mac, System Settings › Privacy & Security › Microphone › your browser.'),
+    'service-not-allowed': () => (IOS ? 'Speech recognition is switched off on this iPhone/iPad. Turn on Settings › General › Keyboard › Enable Dictation, then try again.'
+      : 'This browser does not allow speech recognition here. Use Chrome, Edge or Safari.'),
+    'audio-capture': () => 'No microphone was found, or another app is using it.',
+    network: () => 'Speech recognition needs an internet connection. Check the connection and try again.',
+    'language-not-supported': () => 'This browser cannot recognise that language. Try Chrome or Safari.',
+  };
+
+  // ---- turning spoken phrases into text: voice commands, sentence capitals, "Hon'ble Court"
+  const CMDS = [
+    [/\b(?:new|next)\s+paragraph\b|\bnew\s+para\b|नया\s*पैराग्राफ|नया\s*पैरा|नया\s*अनुच्छेद|अगला\s*पैराग्राफ/gi, 'P'],
+    [/\b(?:new|next)\s+line\b|नई\s*लाइन|नयी\s*लाइन|नई\s*पंक्ति|अगली\s*लाइन/gi, 'L'],
+    [/\bfull\s*stop\b|\bfull[\s-]top\b|पूर्ण\s*विराम|फुल\s*स्टॉप/gi, '.'],
+    [/\bsemi[\s-]?colon\b/gi, ';'],
+    [/\bcolon\b|कोलन/gi, ':'],
+    [/\bcomma\b|अल्प\s*विराम|कॉमा|कोमा/gi, ','],
+    [/\bquestion\s+mark\b|प्रश्न\s*(?:वाचक)?\s*चिह्न|प्रश्नवाचक\s*चिन्ह|क्वेश्चन\s*मार्क/gi, '?'],
+    [/\bexclamation\s+mark\b/gi, '!'],
+    [/\bopen\s+brackets?\b|कोष्ठक\s*(?:खोलें|खोलो|शुरू)/gi, '('],
+    [/\bclose\s+brackets?\b|कोष्ठक\s*(?:बंद|बन्द)(?:\s*करें)?/gi, ')'],
+  ];
+  const CONT = new Set('a an and as at be been but by for from had has have he her his in into is it its of on or our she so than that the their them then there these they this those to under upon was we were which while who whom whose will with would'.split(' '));
+  function phraseToText(raw, hindi, prev) {
+    let t = ' ' + raw.trim() + ' ';
+    for (const [re, rep] of CMDS) {
+      t = t.replace(re, () => (rep === 'P' ? '\u0001P\u0001' : rep === 'L' ? '\u0001L\u0001' : rep === '.' ? (hindi ? '।' : '.') + ' ' : rep === '(' ? ' (' : rep + ' '));
+    }
+    t = t.replace(/[ \t]+([,.;:!?।)])/g, '$1').replace(/\(\s+/g, '(').replace(/([.!?।])[.!?।]+/g, '$1').replace(/[ \t]{2,}/g, ' ');
+    t = t.replace(/\s*\u0001P\u0001\s*/g, '\n\n').replace(/\s*\u0001L\u0001\s*/g, '\n').replace(/\n{3,}/g, '\n\n');
+    const lead = (t.match(/^[ \t]*(\n+)/) || [, ''])[1], trail = (t.match(/(\n+)[ \t]*$/) || [, ''])[1];
+    t = t.trim();
+    t = t.replace(/\bhonou?rable\s+(high\s+court|supreme\s+court|chief\s+justice|court|justice)\b/gi, (m, g) => "Hon'ble " + g.replace(/\b\w/g, (c) => c.toUpperCase()));
+    t = t.replace(/(^|[.!?]\s+|\n)([a-z])/g, (m, a, b) => a + b.toUpperCase());              // sentence capitals (English)
+    const continues = prev.trim() && !lead && !/[.!?।:]\s*$|\n\s*$/.test(prev);
+    if (continues) { const m = t.match(/^([A-Z][a-z]+)\b/); if (m && CONT.has(m[1].toLowerCase())) t = m[1].toLowerCase() + t.slice(m[1].length); }
+    return { text: t, lead, trail };
+  }
+  let pendingLead = '';
+  function addPhrase(raw) {
+    const prev = el.out.value;
+    const r = phraseToText(raw, lang.startsWith('hi'), pendingLead ? prev + '\n' : prev);
+    const lead = r.lead || pendingLead;
+    if (!r.text) { pendingLead = lead.length > 1 || r.trail.length > 1 ? '\n\n' : (lead || r.trail); return ''; }
+    pendingLead = r.trail;
+    let base = prev, sep = '';
+    if (base.trim()) {
+      if (lead) { base = base.replace(/\s+$/, ''); sep = lead; }
+      else sep = /\s$/.test(base) || /^[,.;:!?।)\]]/.test(r.text) ? '' : ' ';
+    } else base = '';
+    el.out.value = base + sep + r.text;
+    store.set('text', el.out.value);
+    el.out.scrollTop = el.out.scrollHeight;
+    return r.text;
+  }
+
+  // ---- listening (the same handling as NyayLekh's ⚡ Instant engine)
+  const words = (t) => String(t || '').trim().split(/\s+/).filter(Boolean);
+  let rec = null;
+  /* one dictation; onText(raw) receives each finished phrase */
+  function listen(onText, opts = {}) {
+    const R = { on: true, started: Date.now(), starts: [], words: 0, onText, failed: false, closed: false };
+    const begin = () => {
+      const now = Date.now();
+      R.starts = R.starts.filter((t) => now - t < 10000).concat(now);
+      if (R.starts.length > 6) { fail('The speech service keeps stopping. Check the internet connection and try again.'); return; }
+      const r = new SR();
+      R.sessions = (R.sessions || 0) + 1;
+      r.lang = opts.lang || lang; r.continuous = !ANDROID; r.interimResults = true; r.maxAlternatives = 1;
+      const S = { finalText: '', interim: '', done: 0, heard: false, ended: false, timer: null, audio: false };
+      R.r = r; R.S = S;
+      const take = (all) => {
+        const w = words(all);
+        if (w.length + 1 < S.done) { log('recogniser started a new line'); S.done = 0; }
+        if (w.length <= S.done) return;
+        const part = w.slice(S.done).join(' ');
+        S.done = w.length; R.words += part.split(' ').length;
+        log('phrase: ' + part.slice(0, 80));
+        R.onText(part);
+      };
+      const commitAll = () => { clearTimeout(S.timer); take(`${S.finalText} ${S.interim}`); showLive(''); };
+      S.commitAll = commitAll;
+      r.onstart = () => log(`listening · ${r.lang} · continuous ${r.continuous}`);
+      r.onaudiostart = () => { S.audio = true; log('microphone on'); showLive(''); };
+      r.onspeechstart = () => log('speech heard');
+      r.onresult = (e) => {
+        const finals = []; let interim = '';
+        for (let i = 0; i < e.results.length; i++) {
+          const res = e.results[i]; const t = ((res[0] && res[0].transcript) || '').trim();
+          if (!t) continue;
+          if (res.isFinal) { if (finals.length && t.toLowerCase().startsWith(finals[finals.length - 1].toLowerCase())) finals[finals.length - 1] = t; else finals.push(t); }
+          else interim += (interim ? ' ' : '') + t;
+        }
+        S.finalText = finals.join(' '); S.interim = interim; S.heard = true;
+        if (finals.length) take(S.finalText);
+        showLive(words(`${S.finalText} ${S.interim}`).slice(S.done).join(' '));
+        clearTimeout(S.timer);
+        if (interim) S.timer = setTimeout(commitAll, WEBKIT_SR ? 1200 : 2500);   // a pause: write what was heard
+      };
+      r.onerror = (e) => {
+        log('error: ' + e.error);
+        // Safari may refuse to restart listening by itself after a long silence: that is a pause, not a permission problem
+        if (R.sessions > 1 && (e.error === 'not-allowed' || e.error === 'service-not-allowed')) { R.paused = true; fail(''); return; }
+        if (ERRORS[e.error]) fail(ERRORS[e.error]());
+      };
+      r.onend = () => {
+        if (S.ended) return; S.ended = true; clearTimeout(S.timer); clearTimeout(S.watch);
+        log('session ended');
+        commitAll();
+        if (R.r !== r) return;
+        if (S.heard) R.starts = [];
+        if (R.on) setTimeout(() => { if (R.on) begin(); }, 150); else done();
+      };
+      try { r.start(); } catch (err) { if (R.sessions > 1) { R.paused = true; fail(''); } else fail('Speech recognition could not start: ' + (err.message || err)); return; }
+      S.watch = setTimeout(() => { if (!S.audio && !S.heard && !S.ended && R.on && R.r === r && !R.retried) { R.retried = true; log('no microphone yet — starting again'); try { r.abort(); } catch { /* restarts */ } } }, 3500);
+    };
+    const showLive = (t) => { el.live.textContent = t || (R.S && R.S.audio ? 'Listening… speak now' : 'Starting the microphone…'); el.live.classList.toggle('heard', !!t); };
+    const fail = (msg) => { if (R.failed) return; R.failed = true; R.on = false; R.error = msg || ''; try { R.r && R.r.abort(); } catch { /* ignore */ } done(); };
+    const done = () => {
+      if (R.closed) return;
+      if (R.S && !R.S.ended) R.S.commitAll();
+      R.closed = true; R.on = false; log(`finished · ${R.words} word(s)`);
+      if (R.onDone) R.onDone(R);
+    };
+    R.stop = () => {
+      if (!R.on) return; R.on = false; log('stop pressed');
+      try { R.r.stop(); } catch { /* ended */ }
+      setTimeout(() => { if (R.S && !R.S.ended) { R.S.commitAll(); try { R.r.abort(); } catch { /* ignore */ } } }, 1500);
+      setTimeout(done, 2500);
+    };
+    R.fail = fail;
+    begin();
+    return R;
+  }
+
+  // ---- the microphone button
+  let tick = null;
+  function start() {
+    if (!onWebsite) { say('⚠ ' + esc(whereProblem() + ' ' + HOME), 'err'); return; }
+    if (!SR) { say(`⚠ ${esc(BROWSER)} has no built-in speech recognition. Use ${IOS ? 'Safari' : 'Chrome or Edge'}.`, 'err'); return; }
+    rec = listen(addPhrase);
+    rec.onDone = (R) => {
+      clearInterval(tick); rec = null;
+      el.mic.classList.remove('on'); el.mic.setAttribute('aria-label', 'Start dictation');
+      el.live.textContent = 'Words appear here while you speak.'; el.live.classList.remove('heard');
+      if (R.error) say('⚠ ' + esc(R.error), 'err');
+      else if (R.paused) say('Listening paused after a silence — tap the microphone to continue.', 'ok');
+      else if (!R.words && Date.now() - R.started > 3000) say('⚠ Nothing was recognised. ' + (IOS ? 'Check Settings › General › Keyboard › Enable Dictation, and that Safari may use the microphone.' : 'Check the microphone is allowed and working, then try again.'), 'err');
+      else if (R.words) say(`✓ ${R.words} word(s) added. Tap the microphone to continue.`, 'ok');
+    };
+    if (rec.closed) { rec.onDone(rec); return; }
+    el.mic.classList.add('on'); el.mic.setAttribute('aria-label', 'Stop dictation');
+    say('Listening — speak naturally, pause between sentences. Tap again to stop.');
+    const t0 = Date.now();
+    tick = setInterval(() => { el.clock.textContent = clock((Date.now() - t0) / 1000); }, 250);
+    try { if (navigator.wakeLock) navigator.wakeLock.request('screen').then((l) => { if (rec) rec.wake = l; }).catch(() => {}); } catch { /* optional */ }
+  }
+  el.mic.addEventListener('click', () => { if (rec) { try { rec.wake && rec.wake.release(); } catch { /* ignore */ } rec.stop(); } else start(); });
+
+  // ---- buttons
+  $('#copy').addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(el.out.value); say('Copied.', 'ok'); }
+    catch { el.out.focus(); el.out.select(); say('Text selected — use Copy from the menu.'); }
+  });
+  $('#clear').addEventListener('click', () => { el.out.value = ''; pendingLead = ''; store.set('text', ''); say('Cleared. Tap the microphone and speak.'); });
+
+  // ---- "Check this device"
+  const RESULTS = [];
+  function step(id, title) {
+    let li = document.getElementById('c-' + id);
+    if (!li) { li = document.createElement('li'); li.id = 'c-' + id; el.checks.appendChild(li); }
+    const set = (state, detail = '', extra = '') => {
+      li.className = state;
+      li.innerHTML = `<span class="i">${state === 'ok' ? '✅' : state === 'err' ? '❌' : state === 'skip' ? '➖' : '<span class="spin"></span>'}</span><div><div class="t">${esc(title)}</div>${detail ? `<div class="d">${detail}</div>` : ''}${extra}</div>`;
+      const plain = (detail + ' ' + extra).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+      const r = RESULTS.find((x) => x.id === id); if (r) Object.assign(r, { state, detail: plain }); else RESULTS.push({ id, title, state, detail: plain });
+    };
+    set('run');
+    return set;
+  }
+  const norm = (t) => String(t).toLowerCase().normalize('NFC').replace(/[^\p{L}\p{N}\p{M}\s]/gu, ' ').split(/\s+/).filter(Boolean);
+  function match(expected, heard) {
+    const a = norm(expected), b = norm(heard);
+    const dp = Array.from({ length: a.length + 1 }, () => new Array(b.length + 1).fill(0));
+    for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++) dp[i][j] = a[i - 1] === b[j - 1] ? dp[i - 1][j - 1] + 1 : Math.max(dp[i - 1][j], dp[i][j - 1]);
+    return a.length ? Math.round(100 * dp[a.length][b.length] / a.length) : 0;
+  }
+  const SENTENCE = { 'en-IN': 'The applicant has been falsely implicated in the present case.', 'hi-IN': 'प्रार्थी को झूठा फंसाया गया है।' };
+  let checking = false;
+  async function runChecks() {
+    if (checking || rec) return;
+    checking = true; $('#runcheck').disabled = true; el.mic.disabled = true;
+    el.checks.hidden = false; el.checks.innerHTML = ''; RESULTS.length = 0; $('#checkacts').hidden = false;
+    const s1 = step('where', 'Opened on the website, in a normal browser');
+    if (onWebsite) s1('ok', `${esc(BROWSER)} on ${esc(DEVICE)} · ${esc(location.host)}`); else s1('err', `${esc(whereProblem())} <a href="${HOME}">${HOME}</a>`);
+    const s2 = step('sr', 'Built-in speech recognition');
+    if (SR) s2('ok', `Available in ${esc(BROWSER)} — free, no key needed`); else s2('err', `${esc(BROWSER)} has none. Use ${IOS ? 'Safari' : 'Chrome or Edge'}.`);
+    const s3 = step('read', `Read this sentence aloud (${lang.startsWith('hi') ? 'Hindi' : 'English'})`);
+    if (!onWebsite || !SR) { s3('skip', 'Not possible here — see above.'); }
+    else {
+      const sentence = SENTENCE[lang] || SENTENCE['en-IN'];
+      s3('run', `<span class="say">“${esc(sentence)}”</span><br>Read it now, then pause — up to 12 seconds.`);
+      let heard = '';
+      const R = listen((t) => { heard += (heard ? ' ' : '') + t; }, { lang });
+      const end = Date.now() + 12000;
+      while (!R.closed && Date.now() < end) {
+        await sleep(250);
+        if (heard && norm(heard).length >= norm(sentence).length - 1 && R.on) R.stop();
+      }
+      if (!R.closed) { R.stop(); while (!R.closed) await sleep(200); }
+      el.live.textContent = 'Words appear here while you speak.'; el.live.classList.remove('heard');
+      if (R.error) s3('err', esc(R.error));
+      else if (!heard) s3('err', 'Nothing was recognised. ' + (IOS ? 'Check Settings › General › Keyboard › Enable Dictation and the microphone permission.' : 'Check that the microphone is allowed and working.'));
+      else {
+        const m = match(sentence, heard);
+        s3(m >= 60 ? 'ok' : 'err', `${m}% of the words recognised${m < 60 ? ' — speak a little slower and closer to the microphone, then check again' : ''}`,
+          `<div class="sample"><b>Sentence:</b> ${esc(sentence)}<br><b>Recognised:</b> ${esc(heard)}</div>`);
+      }
+    }
+    checking = false; $('#runcheck').disabled = false; el.mic.disabled = false;
+    const bad = RESULTS.filter((r) => r.state === 'err').length;
+    say(bad ? `⚠ ${bad} check(s) need attention — see above.` : '✓ Everything works on this device. Tap the microphone and dictate.', bad ? 'err' : 'ok');
+  }
+  $('#runcheck').addEventListener('click', runChecks);
+  $('#copyreport').addEventListener('click', async () => {
+    const text = [`Free Dictation Test — ${$('#ver').textContent}`, `${BROWSER} on ${DEVICE} · ${location.href.split('?')[0]}`, UA, '',
+      ...RESULTS.map((r) => `${r.state === 'ok' ? 'OK ' : r.state === 'err' ? 'ERR' : '-- '} ${r.title}: ${r.detail}`), '', ...LOG.slice(-30)].join('\n');
+    try { await navigator.clipboard.writeText(text); say('Report copied — paste it into the chat.', 'ok'); }
+    catch { el.detail.textContent = text; $('#dbg').open = true; say('Copy the report from “Technical details” below.'); }
+  });
+  log(`page loaded · ${BROWSER} on ${DEVICE} · speech recognition ${SR ? 'yes' : 'no'} · in-app ${IN_APP}`);
+  window.__freetest = { LOG, RESULTS, phraseToText };      // for automated tests
+})();
+</script>
+</body>
+</html>
